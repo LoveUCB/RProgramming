@@ -1,0 +1,28 @@
+---
+title: "homework one"
+author: "Spencer Wang"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+- load data
+
+```{r}
+dat_group <- read.table("../homework/group.txt", header = TRUE, sep = '\t', na.strings = c('NA','NO'))
+```
+
+- view data
+
+```{r}
+dat_group$Name
+dat_group$Group
+dat_group$Score
+dat_group
+```
+
+- median data
+
+```{r}
+median(dat_group$Score,na)
+median(dat_group$Score, na.rm = TRUE)
+```

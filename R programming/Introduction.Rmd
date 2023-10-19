@@ -1,0 +1,267 @@
+---
+title: "Introduction"
+author: "Spencer Wang"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+-   考试形式：四道问答题，编程操作题
+-   清屏：Control + L 终止正在运行的程序：按STOP
+
+## 一些基本的代码
+
+### 工作目录
+
+```{r}
+getwd() # 返回当前的工作目录
+setwd("your directory") # 切换当前的工作目录，r语言不区分单双引号
+```
+
+### 简单的计算函数
+
+```{r}
+mean(c(1,2,3),na.rm = TRUE) # return平均数，将值为not available的数据剔除
+median(c(1,2,5),na.rm = TRUE) # return中位数，将值为not available的数据剔除
+max(1,2,3)
+min(1,2,3)
+```
+
+### 退出r
+
+```{r}
+q() # 退出r语言
+```
+
+### 导入/导出.RData
+
+```{r}
+save.image() # 保存工作目录 导出文件为.RData
+load("your directory/.RData") # 导入RData 路径按住TAB键自动补齐
+```
+
+### 历史
+
+R语言将历史记录load到.Rhistory文件中
+
+```{r}
+history()
+history(100) # 表示load最近的100条记录
+history(Inf) # 表示load全部的历史记录
+savehistory()
+```
+
+### 赋值
+
+注意：x = 36可以，36 = x不行
+
+```{r}
+a <- b <- c <- 6 # 多个值的赋值相同
+a <<- 96 # 不仅当前的环境可以使用，其他环境也可以使用
+a = b = c = 6 # 6 = a = b = c不行
+x <- .Last.value # 将上一个数值赋值给x
+x
+```
+
+```         
+函数的参数规定是使用等于号
+```
+
+```{r}
+median(x = 1:10) # 仅仅在函数内进行参数的赋值，在函数外不进行赋值
+# x 
+# Error: object 'x' not found
+median(x <- 1:10) # 参数赋值
+x
+```
+
+## r语言的包
+
+### 安装，卸载，library，detach
+
+```{r}
+install.packages("packagename")
+remove.packages("packagename") # 删除包
+library("packagename")
+detach("packagename")
+```
+
+### 查看安装的包的信息
+
+```{r}
+installed.packages()[,c("Package","Version")] # return package's name and version
+```
+
+## 帮助
+
+```{r}
+help(max) # help(function name)
+?max # same as help
+args(max) # return function arguments
+example(max) # return a example for a function
+apropos('mea') # return function name that contains 'mea'
+```
+
+## 将记录清除
+
+### 清除一个对象
+
+```{r}
+remove(aa)
+```
+
+### 清除所有对象
+
+```{r}
+rm(list = ls())
+```
+
+## 数据的I和O
+
+### 输入
+
+1.  load data from other R packages
+2.  keyboard input
+3.  read.table()/csv()/delim()
+4.  scan()
+5.  edit() -\> 修改已经存储的数据
+6.  readLines()
+
+#### package
+
+```{r}
+# 调取包里的数据
+library("MASS")
+data(Cars93)
+Cars93
+# 调取包里的全部数据
+data(package = "rpart")
+# 调取某个包里的某个数据
+data(Puromycin, package = "datasets")
+```
+
+#### readline()
+
+```{r}
+Str <- readline(prompt = 'Please type your words: ') # 键盘上输入
+```
+
+#### keybord input
+
+```{r}
+super_sleepers <- data.frame(
+  rating = 1:4, # all vectors are column
+  animal = c("koala", "hedgehog", "sloth", "panda"),
+  country = c("Australia", "Italy", "Peru", "China"),
+  avg_sleep_hours = c(21, 18, 17, 10)
+)
+
+print(super_sleepers)
+```
+
+#### read.table
+
+```{r}
+aa <- read.table("homework/group.txt", header = TRUE, sep = "\t", na.strings = c("NO","NA")) 
+# 读取数据，header = TRUE表示将第一行作为表头，sep = \t表示\t作为分隔符，na.string = c('NO','NA') 表示默认这两个为NA数据
+head(aa)
+tail(aa)
+```
+
+#### scan
+
+```{r}
+a <- scan(file = "homework/group.txt", what = "character") # 表示读取的数据类型为字符串
+a
+```
+
+#### edit()
+
+```{r}
+edit(a) # 弹出数据集的编辑窗口
+a_new <- edit(a) # 旧的变量不改变
+xnew <- edit(data.frame())
+```
+
+#### readLines
+
+prepare the settings
+
+```{r}
+path <- getwd()
+write.table(x = "the first line\nthe second line\nthe third line",
+            file = paste(path, "/my_txt.txt", sep = ""),
+            row.names = FALSE, col.names = FALSE, quote = FALSE
+)
+```
+
+```{r}
+my_txt <- readLines(paste(path, "/my_txt.txt", sep = ''))
+my_txt <- readLines(paste(path, "/my_txt.txt", sep = ''), n = 2)
+my_txt
+```
+
+### 输出
+
+#### 输出到屏幕
+
+```{r}
+int <- 24
+cat(int, "DataFlair", "BigData\n") # 中间结果输出
+```
+
+#### 输出到文档
+
+##### sink
+
+```{r}
+sink("my_txt.txt", append = FALSE, split = FALSE) # 打开一个通道
+i <- 1:10
+outer(i,i) # 不显示
+sink() # 关闭通道
+```
+
+##### write.table
+
+```{r}
+sample_data <- data.frame(
+  name = c("Geeks1", "Geeks2", "Geeks3", "Geeks4", "Geeks5", "Geeks6"),
+  value = c(11, 15, 10, 23, 32, 53)
+)
+```
+
+```{r}
+write.table(sample_data,                     # 数据框
+            file = "111/sample.txt",  # 文件路径和名称
+            append = FALSE,         # 是否追加写入（覆盖原文件）
+            quote = FALSE,           # 是否使用引号
+            sep = '\t',              # 分隔符 默认为空格
+            eol = '\n',             # 行尾符
+            na = 'NA',              # 缺失值表示
+            row.names = FALSE,       # 是否包含行名
+            col.names = TRUE)       # 是否包含列名
+```
+
+## Excel
+
+### Excel的输入
+
+```{r}
+library("xlsx")
+write.xlsx(iris, filename = "myexcel.xlsx", sheetName = "IRIS", append = TRUE)
+write.xlsx(mtcars, filename = "myexcel.xlsx", sheetName = "MTCARS", append = TRUE)
+write.xlsx(Titanic, filename = "myexcel.xlsx", sheetName = "TITANIC", append = TRUE)
+```
+
+### Excel的输出
+
+```{r}
+sheetIndex <- 1
+res <- read.xlsx("myexcel.xlsx", sheetIndex, header = TRUE)
+```
+
+
+
+
+
+
+

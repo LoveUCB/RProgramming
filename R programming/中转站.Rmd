@@ -1,0 +1,96 @@
+---
+title: "Untitled"
+author: "Spencer Wang"
+date: "`r Sys.Date()`"
+output: html_document
+---
+## Advanced data type
+
+###   Vector
+```{r}
+V <- c(1, 2, 3, 4, 5, 6, 1.1, 1.2)
+V # 1.0 2.0 3.0 4.0 5.0 6.0 1.1 1.2
+mode(V)
+length(V)
+# or using assign to establish
+assign("V", c(1, 2, 3, 4, 5, 6, 1.1, 1.2))
+```
+
+    For missing values
+```{r}
+V <- c(1, 2, NA, 4, 5, 6, 1.1, 1.2)
+```
+
+    Access values in vector
+```{r}
+V[1] # unlike python, the first index is one
+V[2:6] # unlike python, 2-6 all
+```
+    
+    +-*/
+```{r}
+V + V; V + 1
+V - V; V - 1
+V * V; V * 2
+V / V; V / 2
+```
+
+    +Inf, -Inf, NaN (Not a Number), NULL
+```{r}
+V <- c(1, -1, 0)
+V / 0 # Inf -Inf  NaN
+```
+
+    Constant Method
+```{r}
+V <- 1:10
+```
+
+###   Array 多维度的向量
+
+```{r}
+X <- 1:24
+dim(X) <- c(3,4,2) # define the dim
+X
+```
+
+    Transfer the dim
+```{r}
+# transfer the dim
+dim(X) <- c(4,6)
+X
+```
+
+    Using function array to establish
+```{r}
+X <- array(1:24, dim = c(3,4,2))
+X
+```
+
+```{r}
+X <- array(0, dim = c(3,4,2))
+X
+```
+
+    Using rbind and cbind
+```{r}
+x1 <- c(1,2,3,4)
+x2 <- c(5,6,7,8)
+X <- rbind(x1, x2) # row
+X
+X <- cbind(x1, x2) # column
+X
+```
+
+    Access values
+```{r}
+X[1,] # row
+X[c(1,2),] # multiple rows
+X[,1] # column
+```
+
+###   Matrix 二维数组
+
+
+
+
