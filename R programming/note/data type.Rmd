@@ -1,0 +1,486 @@
+---
+title: "data type"
+author: "Spencer Wang"
+date: "`r Sys.Date()`"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+## Basic data type
+
+### Integer
+
+```{r}
+x <- 10L # add L
+x
+mode(x)
+length(x)
+```
+
+### Float
+
+```{r}
+x <- 10.9
+x
+mode(x)
+length(x)
+```
+
+### numeric
+
+#### is.numeric
+
+```{r}
+is.numeric(11)
+is.numeric(11.1)
+```
+
+#### Date
+
+```{r}
+x <- as.Date("2023-10-12")
+typeof(x); class(x); mode(x)
+```
+
+#### difference between integer and numeric
+
+```{r}
+x <- c(1L, 2L, 5L, 3L, 10L)
+x
+is.integer(x)
+```
+
+```{r}
+x <- c(1, 2, 5, 3, 10)
+x
+is.integer(x)
+```
+
+### Logical
+
+```{r}
+x <- TRUE # T
+x
+x < 0 # False
+mode(x)
+length(x)
+```
+
+bug ?
+
+```{r}
+y <- "55"
+y == 55 # TRUE
+```
+
+### Character
+
+```{r}
+x <- "hello"
+x
+mode(x)
+length(x) # single character's length = 1 
+```
+
+#### is.character
+
+```{r}
+x1 <- c("Hello", "CMU", 520) # 在一个向量中同时存在数值型和字符型，数值型的被同化
+x1 # [1] "Hello" "CMU" "520"
+x2 <- c(10, 20, 30)
+is.character(x1)
+is.character(x2)
+```
+
+```{r}
+vector1 <- c(1,2,3)
+vector2 <- c("CMU", "Pittsburg", "Penn")
+result <- array(c(vector1,vector2),dim = c(3,3,2))
+result
+is.character(result) # TRUE
+result <- data.frame(vector1,vector2)
+result
+is.character(result) # FALSE
+```
+
+### Complex
+
+```{r}
+x <- 4 + 2i
+x
+mode(x)
+length(x)
+is.complex(x)
+```
+
+### Functions
+
+```{r}
+mode(x <- 5) # numeric
+typeof(x) # double
+class(x) # numeric
+
+mode(y <- "test") # character
+typeof(y) # character
+class(y) # character
+
+foo <- function(x){x^2}
+mode(foo) # function
+typeof(foo) # closure
+class(foo) # function
+
+typeof(list) # builtin
+mode(list) # function
+class(list) # function
+```
+
+## Advanced data type
+
+![the same color represent a consistent data type](https://techvidvan.com/tutorials/wp-content/uploads/sites/2/2020/01/R-data-strucutres.jpg){width="500"} 
+
+### Vector
+
+-   The data types in the vector need to be **consistent**. If the string type and the numeric type are at the same time, they all become strings.
+
+```{r}
+V <- c(1, 2, 3, 4, 5, 6, 1.1, 1.2)
+V # 1.0 2.0 3.0 4.0 5.0 6.0 1.1 1.2
+assign("V", c(1, 2, 3, 4, 5, 6, 1.1, 1.2)) # or using assign to establish
+typeof(V)
+mode(V)
+class(V)
+mode(V)
+length(V)
+```
+
+#### seq()
+
+```{r}
+seq(1, 3, by = 0.2) # by -> step
+seq(1, 5, length.out = 4) # length.out -> only contain 4 numbers
+```
+
+#### Constant Method
+
+```{r}
+V <- 1:10
+V <- 10:1
+V
+```
+
+#### For missing values
+
+```{r}
+V <- c(1, 2, NA, 4, 5, 6, 1.1, 1.2)
+```
+
+#### Access values in vector
+
+```{r}
+V[1] # unlike python, the first index is one
+V[c(2, 4)] # to call several
+V[2:6] # unlike python, 2-6 all
+V[-1] # call all except the first
+```
+
+```{r}
+V <- -1:5
+V < 0
+V > 0
+V[c(TRUE, FALSE, FALSE, TRUE, FALSE,TRUE)]
+V[V < 0]
+V[V > 0]
+```
+
+#### dictionary
+
+-   just like dictionary in Python
+
+```{r}
+x <- c("first" = 3, "second" = 0, "third" = 9)
+names(x)
+x["second"]
+x[2]
+```
+
+#### edit
+
+```{r}
+x <- c(-3, -2, -1, 0, 1, 2)
+x[2] <- 0
+x[x < 0] <- 5 # if below 0, change to 5
+x <- x[1:4]
+```
+
+#### +-*/
+
+```{r}
+V + V; V + 1
+V - V; V - 1
+V * V; V * 2
+V / V; V / 2
+```
+
+#### +Inf, -Inf, NaN (Not a Number), NULL
+
+```{r}
+V <- c(1, -1, 0)
+V / 0 # Inf -Inf  NaN
+```
+
+### Matrix
+
+#### Create a matrix
+
+##### matrix()
+
+```{r}
+matrix_a <- matrix(1:9, byrow = TRUE, nrow = 3, ncol = 3, dimnames = list(c("X","Y","Z"),c("A","B","C")))
+matrix_a
+matrix_a <- matrix(1:10, byrow = FALSE, nrow = 5, ncol = 2)
+matrix_a
+```
+
+##### using dim() to create
+
+```{r}
+x <- c(1,2,3,4,5,6)
+dim(x) <- c(2,3)
+x
+```
+
+#### some arguments
+
+```{r}
+dim(matrix_a)
+nrow(matrix_a)
+ncol(matrix_a)
+colnames(matrix_a)
+rownames(matrix_a)
+attributes(matrix_a)
+```
+
+#### change
+
+```{r}
+colnames(matrix_a) <- c("1","2","3")
+rownames(matrix_a) <- c("1","2","3")
+matrix_a
+```
+
+#### cbind() and rbind()
+
+```{r}
+cbind(c(1,2,3),c(4,5,6))
+rbind(c(1,2,3),c(4,5,6))
+```
+
+#### call rows and columns
+
+```{r}
+x <- matrix(1:9, nrow = 3, ncol = 3, byrow = TRUE)
+x[1,] # return vector
+x[1,,drop = FALSE] # return matrix
+```
+
+```{r}
+x[c(1,2),c(2,3)]
+x[c(3,2),]
+x[,]
+x[-1,]
+```
+
+```{r}
+x <- matrix(c(4, 6, 1, 8, 0, 2, 3, 7, 9),
+            nrow = 3, ncol = 3, byrow = TRUE,
+            dimnames = list(NULL, c("A", "B", "C")))
+x
+x[,"A"]
+x[TRUE, c("A","C")]
+x[2:3,c("A","C")]
+```
+
+### data frame
+
+-   every record in one col is consistent（每一列的数据类型相同）
+
+```{r}
+x <- data.frame(
+  SN = c(1,2,3,4),
+  Age = c(21, 15, 17, 18),
+  Name = c("John", "Dora", "Lucy", "Lily"),
+  gender = c("M", "F", "F", "F")
+)
+
+x
+typeof(x)
+class(x)
+mode(x)
+str(x)
+```
+
+```{r}
+x <- data.frame(
+  SN = c(1,2,3,4),
+  Age = c(21, 15, 17, 18),
+  Name = c("John", "Dora", "Lucy", "Lily"),
+  gender = c("M", "F", "F", "F"),
+  stringsAsFactors = TRUE
+)
+str(x)
+```
+
+#### call records in dataframe
+
+```{r}
+# data.frame
+x
+x["Name"]
+x[3]
+# vector
+x$Name
+x[["Name"]]
+x[[3]]
+```
+
+```{r}
+x[2:3,]
+x[x$Age > 15, ]
+x[2:3, "Name"]
+```
+
+#### change
+
+```{r}
+x[1,"Age"] <- 20
+```
+
+#### adding row
+
+```{r}
+x <- data.frame(
+  SN = c(1,2),
+  Age = c(20,15),
+  Name = c("John", "Dora")
+)
+
+new_row <- list(SN = 1, Age = 16, Name = "Paul") # not vector!
+x <- rbind(x, new_row)
+x
+```
+
+#### adding col
+
+```{r}
+x$gender <- c("F","F","M")
+x
+x <- cbind(x, State = c("NY","Penn","Cal"))
+x
+```
+
+```{r}
+is.data.frame(x)
+```
+
+#### delete
+
+```{r}
+x$State <- NULL
+x
+x <- x[,1:3]
+```
+
+### Array
+
+#### establish
+```{r}
+row_names <- c("row1", "row2")
+col_names <- c("col1", "col2", "col3")
+mat_names <- c("Mat1", "Mat2")
+arr <- array(2:13, dim = c(2,3,2), dimnames = list(row_names, col_names, mat_names))
+arr
+```
+
+#### call records in array
+```{r}
+arr[,1,1]
+arr["row2",,"Mat2"]
+```
+
+### List
+
+#### create list
+```{r}
+# tags are optional
+x <- list("a" = 2.5, "b" = TRUE, "c" = 1:3)
+x
+typeof(x)
+mode(x)
+class(x)
+```
+
+```{r}
+s <- str(x)
+s
+```
+
+#### call elements
+```{r}
+x["a"]
+x[1]
+x[["a"]]
+x[[1]]
+x$a
+x[c(1,2)]
+x[c(TRUE, TRUE, FALSE)]
+```
+
+#### modify elements
+```{r}
+x[["a"]] <- 3.5
+x
+```
+
+#### add element
+```{r}
+x[["marridge"]] <- FALSE
+x
+```
+
+#### delete
+```{r}
+x$marridge <- NULL
+x[["marridge"]] <- NULL
+```
+
+
+### Factor
+#### create a factor
+```{r}
+x <- factor(
+  c("single","married","married","single"),
+  levels = c("single", "married", "divorced"))
+x
+```
+
+#### call factor
+```{r}
+x[3]
+x[c(2,4)]
+x[-1]
+x[c(TRUE, FALSE, FALSE, TRUE)]
+```
+#### level
+```{r}
+x[2] <- "divorced"
+x
+x[3] <- "widowed"
+x
+```
+
+```{r}
+levels(x) <- c(levels(x), "widowed")
+x[3] <- "widowed"
+x
+```

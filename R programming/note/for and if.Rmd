@@ -1,0 +1,296 @@
+---
+title: "for and if"
+author: "Spencer Wang"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+## 布尔表达式
+
+### 操作符
+-    > < >= <= == !=
+-    &(and) |(or) !(not)
+```{r}
+x <- 10
+y <- 23
+z <- 12
+print(x<y & y>z)
+print(x<y & y==z)
+```
+
+```{r}
+w <- 54
+x <- 12
+y <- 25
+z <- 1
+print(w<x | x>y | z>w)
+```
+
+```{r}
+x <- 3 + 5i
+print(!is.numeric(x))
+```
+```{r}
+x <- 5
+print(is.numeric(x) & (x > 5 | x == 5))
+```
+
+## if else
+
+if (test_expression){
+  # body of if statement
+}
+
+if (test_expression){
+  # body of if statement
+} else{
+  # body of else statement
+}
+
+
+```{r}
+age <- 15
+if (age > 18){
+  print("OK")
+} else{
+  print("NO")
+}
+```
+
+if (test_expression){
+  # body of if statement
+} else if{
+  # body of else if statement
+} else{
+  # body of else statement
+}
+
+```{r}
+x <- 20
+# check if x is positive
+if (x> 0) {
+# check if x is even or odd
+if (x %% 2 == 0) {print("x is a positive even number")} 
+else {print("x is a positive odd number")}
+# execute if x is not positive
+}else {
+# check if x is even or odd
+if (x %% 2 == 0) {print("x is a negative even number")} else {print("x is a negative odd number")}
+}
+```
+
+### ifelse() 函数
+- ifelse(test_expression, x, y)
+```{r}
+x <- c(12, 9, 23, 14, 20, 1, 5)
+ifelse(x %% 2 == 0, "EVEN", "ODD")
+# [1] "EVEN" "ODD"  "ODD"  "EVEN" "EVEN" "ODD"  "ODD" 
+```
+
+## while --- loop
+- 一般情况下使用的时候不知道循环多少次
+
+while (test_expression) {
+  # block of code
+}
+
+```{r}
+number = 1
+sum = 10
+while (number <= 10){
+  sum = sum + number
+  number = number + 1
+}
+print(sum)
+```
+
+### break
+- 终止
+```{r}
+number = 1
+while(number <= 10){
+  print(number)
+  number = number + 1
+  if (number == 6){
+    break
+  }
+}
+```
+
+### next
+- 跳过本次循环 类似于continue
+- 注意初始条件要放在next前面
+```{r}
+number = 1
+while(number <= 10){
+  if (number %% 2 == 0){
+    number = number + 1
+    next
+  }
+  print(number)
+  number = number + 1
+}
+```
+### for
+- for中是一个对象，while中是一个条件
+```{r}
+num <- c(2,3,12,14,5,19,64)
+count = 0
+for (i in num){
+  if (i %% 2 == 0){
+    count = count + 1
+  }
+}
+print(count)
+```
+
+
+### 循环嵌套
+```{r}
+sequence_1 <- c(1,2,3)
+sequence_2 <- c(1,2,3)
+for (i in sequence_1) {
+  for (j in sequence_2) {
+    if ((i + j) %% 2 == 0){
+      print(paste(i,j))
+    }
+  }
+}
+```
+
+### 在dataframe中
+逐行操作
+```{r}
+ss <- data.frame(
+  a = c("f", "f", "m", "m", "f", "m", "f", "m", "m"),
+  b = c(3,5,12,34,23,33,77,55,33)
+)
+
+for (i in 1:nrow(ss)){
+  if (ss[i,1] == "f"){
+    print(paste("She is", ss[i,2], "years old."))
+  }
+}
+```
+
+### repeat
+- 一定要有终止条件
+```{r}
+x = 1
+repeat{
+  print(x)
+  
+  if (x > 4){
+    break
+  }
+  x = x + 1
+}
+```
+
+无终止条件 —— 死循环
+```{r}
+x = 1
+sum = 0
+
+repeat{
+  sum = sum + x
+  print(sum)
+  x = x + 1
+}
+```
+
+
+## function
+
+### Basic
+- 和python一样，先定义再调用
+```{r}
+# 定义
+power <- function(a, b){
+  print(paste(a, "raised to the power", b ,"is: ", a^b)) # paste拼接字符串
+}
+# 调用
+power(2, 3)
+power(b = 3, a = 2) # 调换顺序
+
+```
+
+- 默认值 —— 和python也一样
+```{r}
+power <- function(a = 2, b){
+  print(paste(a, "raised to the power", b ,"is: ", a^b)) # paste拼接字符串
+}
+power(b = 3) # 这里一定要写b = 
+```
+
+- 返回值 —— 和python还是一样
+```{r}
+power <- function(a, b) {
+  return(a^b)
+}
+power(2,3)
+```
+### 函数的嵌套
+```{r}
+power <- function(a){
+  exponent <- function(b){
+    return (a^b)
+  }
+  return (exponent)
+}
+result <- power(2)
+result(3)
+```
+
+## 应用
+根据提供的文本，从启动子的位置上下扩展两个KB
+- 看上下游是否会产生负数或者溢出 —— 对基因的染色体进行判断
+- 如果碰到底端或者顶端，就采取极限
+- +链正确，-链颠倒
+
+### 读取文件
+```{r}
+# 读取染色体长度的文件
+csize <- read.table("../file/hg38.chrom.sizes", header = TRUE)
+# 读取起始位置文件
+bed <- read.table("../file/hg38.gene.bed", header = TRUE)
+```
+### 定义函数
+```{r}
+# a代表染色体长度的表格，b代表起始位置的表格
+window <- function(a, b){
+  for (i in 1:nrow(b)){
+    if (b[i, 2] %in% a$chr){
+      limit = a[a$chr == b[i, 2],2]
+    }
+    else{
+      next
+    }
+    if (b[i,3] == "-"){
+      start = b[i, 5]
+    }
+    else{
+      start = b[i,4]
+    }
+    start_s = start - 2000
+    start_e = start + 2000
+    if (start_s < 0){
+      start_s = 0
+    }
+    if (start_e > limit) {
+      start_e = limit
+    }
+    write.table(data.frame(b[i, 2], start_s, start_e),
+                file = "../file/outcome.bed",
+                sep = "\t",
+                append = TRUE,
+                quote = FALSE,
+                row.names = FALSE,
+                col.names = FALSE)
+  }
+}
+```
+### 保存文件
+```{r}
+result <- window(csize,bed)
+```
